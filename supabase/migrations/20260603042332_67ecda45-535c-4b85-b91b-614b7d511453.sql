@@ -1,0 +1,1 @@
+ALTER TABLE public.bridge_stores ADD COLUMN IF NOT EXISTS whop_company_id TEXT;

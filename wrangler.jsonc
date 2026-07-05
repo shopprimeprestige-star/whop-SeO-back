@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "whop-seo-back-01",
+  "compatibility_date": "2026-06-12",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": ".output/server/index.mjs",
+  "assets": {
+    "directory": ".output/public"
+  },
+  "build": {
+    "command": "bun run build"
+  },
+  "workers_dev": true,
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "SUPABASE_URL": "https://yjjtqpbakttydpvxqtyr.supabase.co",
+    "SUPABASE_PUBLISHABLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlqanRxcGJha3R0eWRwdnhxdHlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyODM0ODksImV4cCI6MjA5ODg1OTQ4OX0.0KA9VeIUIOZUhtNiarNIowMVjfqSKz-ezM4NjQUTW8w"
+  }
+}

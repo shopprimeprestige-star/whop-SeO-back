@@ -1,0 +1,3 @@
+export function renderErrorPage(): string {
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Server Error</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font-family:system-ui,sans-serif;background:#0a0a0a;color:#fafafa;display:flex;min-height:100vh;align-items:center;justify-content:center;margin:0;padding:1rem}.box{max-width:480px;text-align:center}h1{font-size:2rem;margin:0 0 .5rem}p{opacity:.7;margin:.25rem 0}a{color:#60a5fa}</style></head><body><div class="box"><h1>500 — Server Error</h1><p>Qualcosa è andato storto sul server.</p><p><a href="/">Torna alla home</a></p></div></body></html>`;
+}

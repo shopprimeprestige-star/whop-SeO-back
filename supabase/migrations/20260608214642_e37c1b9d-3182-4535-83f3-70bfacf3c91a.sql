@@ -1,0 +1,1 @@
+ALTER TABLE public.shop_products ADD COLUMN IF NOT EXISTS material TEXT;
