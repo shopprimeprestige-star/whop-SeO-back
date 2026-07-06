@@ -29,9 +29,7 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- Seed admin role for the configured admin user
-INSERT INTO public.user_roles (user_id, role)
-VALUES ('4d150ba6-60e4-44c7-b3cf-bb952499e084', 'admin')
-ON CONFLICT (user_id, role) DO NOTHING;
+-- [rimosso seed user_roles: FK verso auth.users non presente in questo progetto]
 
 -- =========================================
 -- SITE SETTINGS (singleton)
