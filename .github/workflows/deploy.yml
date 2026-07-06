@@ -1,0 +1,42 @@
+name: Deploy back (whop-seo-back-01..20)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-back
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install deps
+        run: bun install
+      - name: Write build-time env (.env is gitignored; these values are public anon/publishable)
+        run: |
+          cat > .env <<'ENV'
+          SUPABASE_URL="https://yjjtqpbakttydpvxqtyr.supabase.co"
+          SUPABASE_PUBLISHABLE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlqanRxcGJha3R0eWRwdnhxdHlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyODM0ODksImV4cCI6MjA5ODg1OTQ4OX0.0KA9VeIUIOZUhtNiarNIowMVjfqSKz-ezM4NjQUTW8w"
+          VITE_SUPABASE_URL="https://yjjtqpbakttydpvxqtyr.supabase.co"
+          VITE_SUPABASE_PUBLISHABLE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlqanRxcGJha3R0eWRwdnhxdHlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyODM0ODksImV4cCI6MjA5ODg1OTQ4OX0.0KA9VeIUIOZUhtNiarNIowMVjfqSKz-ezM4NjQUTW8w"
+          ENV
+      - name: Build
+        run: bun run build
+      - name: Deploy all 20 identical copies (service_role secret persists per-worker across deploys)
+        run: |
+          set -e
+          for n in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20; do
+            echo "::group::Deploy whop-seo-back-$n"
+            bunx wrangler deploy --name "whop-seo-back-$n"
+            echo "::endgroup::"
+          done
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: c147977feff61a28aa9ecada1bf5e36b
