@@ -199,7 +199,7 @@ export default function StoreWizard({ onSaved }: { onSaved?: (id: string) => voi
           value={form.display_name}
           placeholder="Es. Acme Shop IT"
           onChange={(v) => set({ display_name: v })}
-          onAutoAdvance={() => goNext()}
+          onAutoAdvance={() => advance()}
         />
       </FieldShell>
     ),
@@ -228,7 +228,7 @@ export default function StoreWizard({ onSaved }: { onSaved?: (id: string) => voi
           value={form.site_a_store_id}
           placeholder="00000000-0000-0000-0000-000000000000"
           onChange={(v) => set({ site_a_store_id: v.trim() })}
-          onAutoAdvance={(t) => UUID_RE.test(t.trim()) && goNext()}
+          onAutoAdvance={(t) => UUID_RE.test(t.trim()) && advance()}
         />
       </FieldShell>
     ),
@@ -241,14 +241,31 @@ export default function StoreWizard({ onSaved }: { onSaved?: (id: string) => voi
     valid: true,
     render: () => (
       <div className="space-y-4">
-        <FieldShell label="BRIDGE_SITE_URL" hint="Predefinito: dominio di questo sito.">
-          <PasteInput
-            mono
-            value={form.bridge_site_url}
-            placeholder={origin || "https://sito-ponte.example"}
-            onChange={(v) => set({ bridge_site_url: v.trim() })}
-            onAutoAdvance={() => goNext()}
-          />
+        <FieldShell label="BRIDGE_SITE_URL" hint="URL pubblico di questo Sito Ponte. Copialo e incollalo su Sito A.">
+          <div className="flex gap-2">
+            <Input
+              value={form.bridge_site_url}
+              placeholder={origin || "https://sito-ponte.example"}
+              onChange={(e) => set({ bridge_site_url: e.target.value.trim() })}
+              className="font-mono text-xs"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              className="shrink-0"
+              onClick={() => {
+                const v = (form.bridge_site_url || origin).trim();
+                if (!v) {
+                  toast.error("URL vuoto");
+                  return;
+                }
+                copy(v, "URL copiato");
+                advance();
+              }}
+            >
+              <Copy className="mr-1.5 h-3.5 w-3.5" /> Copia e continua
+            </Button>
+          </div>
         </FieldShell>
         <UrlBox
           label="URL webhook risultante"
@@ -287,7 +304,7 @@ export default function StoreWizard({ onSaved }: { onSaved?: (id: string) => voi
             value={form.bridge_api_key}
             placeholder="Incolla la Bridge API key"
             onChange={(v) => set({ bridge_api_key: v.trim() })}
-            onAutoAdvance={(t) => t.trim().length >= 16 && goNext()}
+            onAutoAdvance={(t) => t.trim().length >= 16 && advance()}
           />
           <button
             type="button"
@@ -313,7 +330,7 @@ export default function StoreWizard({ onSaved }: { onSaved?: (id: string) => voi
           value={form.callback_url}
           placeholder="https://<sito-a>/.../bridge-callback"
           onChange={(v) => set({ callback_url: v.trim() })}
-          onAutoAdvance={() => goNext()}
+          onAutoAdvance={() => advance()}
         />
       </FieldShell>
     ),
@@ -538,6 +555,11 @@ export default function StoreWizard({ onSaved }: { onSaved?: (id: string) => voi
       toast.error("Completa questo passo prima di continuare.");
       return;
     }
+    setIndex((i) => Math.min(i + 1, total - 1));
+  }
+  // Avanzamento incondizionato: usato dopo copia/incolla, che validano già il valore
+  // appena inserito (evita il bug della validità "stale" dentro l'handler di paste).
+  function advance() {
     setIndex((i) => Math.min(i + 1, total - 1));
   }
   function goBack() {
